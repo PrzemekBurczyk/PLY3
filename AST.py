@@ -1,6 +1,9 @@
 class Node(object):
     def __str__(self):
         return self.printTree()
+
+    def accept(self, visitor):
+        return visitor.visit(self)
         
 class Program(Node):
     def __init__(self, declarations, fundefs, instructions):
