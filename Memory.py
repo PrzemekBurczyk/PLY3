@@ -1,6 +1,9 @@
 class NoMemoryOnStackException(Exception):
     pass
 
+class VariableNotExistingException(Exception):
+    pass
+
 class Memory:
 
     def __init__(self, name): # memory name
@@ -39,6 +42,11 @@ class MemoryStack:
             raise NoMemoryOnStackException
         
     #dopisac puta, ktory zmieni wartosc istniejacej juz zmiennej na stosie
+    def put_existing(self, name, value):
+        existing_variable = self.get(name)
+        if(existing_variable == None):
+            raise VariableNotExistingException
+        self.put(name, value)
 
     def push(self, memory): # push memory <memory> onto the stack
         self.memoryStack.append(memory)
