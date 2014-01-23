@@ -13,7 +13,7 @@ class Interpreter(object):
     def visit(self, node):
         pass
 
-    @when(AST.BinExpr)
+    '''@when(AST.BinExpr)
     def visit(self, node):
         r1 = node.left.accept(self)
         r2 = node.right.accept(self)
@@ -25,8 +25,7 @@ class Interpreter(object):
 
     @when(AST.Assignment)
     def visit(self, node):
-    #
-    #
+        pass
 
     @when(AST.Const)
     def visit(self, node):
@@ -38,6 +37,132 @@ class Interpreter(object):
         r = None
         while node.cond.accept(self):
             r = node.body.accept(self)
-        return r
+        return r'''
+    
+    @when(AST.Node)
+    def visit(self, node):
+        pass
 
+    @when(AST.Program)
+    def visit(self, node):
+        pass
+    
+    @when(AST.Declarations)
+    def visit(self, node):
+        pass
+    
+    @when(AST.Declaration)
+    def visit(self, node):
+        pass
+    
+    @when(AST.Inits)
+    def visit(self, node):
+        pass
+    
+    @when(AST.Init)
+    def visit(self, node):
+        pass
+    
+    @when(AST.Instructions)
+    def visit(self, node):
+        pass
+    
+    @when(AST.Instruction)
+    def visit(self, node):
+        pass
+    
+    @when(AST.Print)
+    def visit(self, node):
+        pass
+    
+    @when(AST.Labeled)
+    def visit(self, node):
+        pass
+    
+    @when(AST.Assignment)
+    def visit(self, node):
+        pass
 
+    @when(AST.Choice)
+    def visit(self, node):
+        pass
+    
+    @when(AST.If)
+    def visit(self, node):
+        pass
+    
+    @when(AST.Else)
+    def visit(self, node):
+        pass
+    
+    @when(AST.While)
+    def visit(self, node):
+        pass
+    
+    @when(AST.RepeatUntil)
+    def visit(self, node):
+        pass
+    
+    @when(AST.Return)
+    def visit(self, node):
+        pass
+    
+    @when(AST.Continue)
+    def visit(self, node):
+        pass
+    
+    @when(AST.Break)
+    def visit(self, node):
+        pass
+    
+    @when(AST.Compound)
+    def visit(self, node):
+        pass
+    
+    @when(AST.Condition)
+    def visit(self, node):
+        pass
+
+    @when(AST.Expression)
+    def visit(self, node):
+        pass
+    
+    @when(AST.Const)
+    def visit(self, node):
+        pass
+    
+    @when(AST.Id)
+    def visit(self, node):
+        pass
+    
+    @when(AST.BinExpr)
+    def visit(self, node):
+        pass
+    
+    @when(AST.ExpressionInParentheses)
+    def visit(self, node):
+        pass
+    
+    @when(AST.IdWithParentheses)
+    def visit(self, node):
+        pass
+    
+    @when(AST.ExpressionList)
+    def visit(self, node):
+        pass
+    
+    @when(AST.FunctionDefinitions)
+    def visit(self, node):
+        pass
+    
+    @when(AST.FunctionDefinition)
+    def visit(self, node):
+        pass
+    
+    @when(AST.ArgumentList)
+    def visit(self, node):
+        pass
+    
+    @when(AST.Argument)
+    def visit(self, node):
+        pass

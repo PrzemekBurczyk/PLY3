@@ -119,18 +119,6 @@ class Id(Expression):
     def __init__(self, id):
         self.id = id
 
-#class Integer(Const):
-#    def __init__(self, value):
-#        Const.__init__(self, "int", value)
-        
-#class Float(Const):
-#    def __init__(self, value):
-#        Const.__init__(self, "float", value)
-        
-#class String(Const):
-#    def __init__(self, value):
-#        Const.__init__(self, "string", value)
-
 class BinExpr(Expression):
     def __init__(self, expr1, operator, expr2):
         self.expr1 = expr1
