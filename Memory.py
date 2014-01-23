@@ -43,10 +43,12 @@ class MemoryStack:
         
     #dopisac puta, ktory zmieni wartosc istniejacej juz zmiennej na stosie
     def put_existing(self, name, value):
-        existing_variable = self.get(name)
-        if(existing_variable == None):
-            raise VariableNotExistingException
-        self.put(name, value)
+        if len(self.memoryStack) > 0:
+            for i in range(len(self.memoryStack) - 1, 0, -1):
+                if self.memoryStack[i].has_key(name):
+                    return self.memoryStack[i].put(name, value)
+        else:
+            return None
 
     def push(self, memory): # push memory <memory> onto the stack
         self.memoryStack.append(memory)

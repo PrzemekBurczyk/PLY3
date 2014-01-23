@@ -1,6 +1,5 @@
 float a = 0, b = 0, c = 0;
 
-int a = 5;
 int d = 0;
 
 int foo(int a, string b){
@@ -13,6 +12,7 @@ int fff() {
 
 float gcd(int m, float n) {
 	float res = 0;
+	float f = 1.0;
 
 	c = 6;
         c = 5.543;
@@ -21,38 +21,36 @@ float gcd(int m, float n) {
         
         
         d = 6;
-        d = 4.234234;
-        d = gcd("aaa", "bbb");
-        d = res(5);
+        d = 4;
+        f = gcd(d, 3.14);
+        d = 7;
         c = fff();
-        c = fff(324234, "bbb");
+        c = fff();
 	if (m!=n) { 
 	    if (m > n) 
-	        res = gcd(foo(5, "ala"), 5.0, 4);
+	        res = gcd(foo(5, "ala"), 5.0);
 	    else
 	        res = gcd(5, 4);
 	    repeat {
 	        m = 2 * 4;
 	        n = 6 * m;
 	    } until ((n > 666) || (m ^ 101001));
-            res = gcd(666);
+            res = gcd(666, 1.0);
 	}
 	else
 	    res = m;
 	while(1) { 
 		break; 
-		return ala; 
 		#(lubie placki);
 	}
 	while(5) {
 		int liczba = 666;
                 liczba = 5;
 	}
-        liczba = 500;
-        res = ("aaa" + 66) / "fff";
+        res = (1 + 66) / 3;
 	print "ala";
 	print (res);
-	return "str";
+	return 5.0;
 }
 
 while(a >= b ) {
