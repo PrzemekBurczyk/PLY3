@@ -12,32 +12,6 @@ class Interpreter(object):
     @on('node')
     def visit(self, node):
         pass
-
-    '''@when(AST.BinExpr)
-    def visit(self, node):
-        r1 = node.left.accept(self)
-        r2 = node.right.accept(self)
-        # try sth smarter than:
-        # if(node.op=='+') return r1+r2
-        # elsif(node.op=='-') ...
-
-
-
-    @when(AST.Assignment)
-    def visit(self, node):
-        pass
-
-    @when(AST.Const)
-    def visit(self, node):
-        return node.value
-
-    # simplistic while loop interpretation
-    @when(AST.While)
-    def visit(self, node):
-        r = None
-        while node.cond.accept(self):
-            r = node.body.accept(self)
-        return r'''
     
     @when(AST.Node)
     def visit(self, node):
@@ -97,7 +71,10 @@ class Interpreter(object):
     
     @when(AST.While)
     def visit(self, node):
-        pass
+        r = None
+        while node.cond.accept(self):
+            r = node.body.accept(self)
+        return r
     
     @when(AST.RepeatUntil)
     def visit(self, node):
@@ -129,7 +106,7 @@ class Interpreter(object):
     
     @when(AST.Const)
     def visit(self, node):
-        pass
+        return node.value
     
     @when(AST.Id)
     def visit(self, node):
@@ -137,7 +114,11 @@ class Interpreter(object):
     
     @when(AST.BinExpr)
     def visit(self, node):
-        pass
+        r1 = node.left.accept(self)
+        r2 = node.right.accept(self)
+        # try sth smarter than:
+        # if(node.op=='+') return r1+r2
+        # elsif(node.op=='-') ...
     
     @when(AST.ExpressionInParentheses)
     def visit(self, node):
