@@ -61,7 +61,10 @@ class Interpreter(object):
     
     @when(AST.Init)
     def visit(self, node):
-        self.globalMemory.put(node.id, node.expression.accept(self))    #dodajemy do obecnego memory w zakresie globalnym
+        if len(self.functionMemories) == 0:
+            self.globalMemory.put(node.id, node.expression.accept(self))
+        else:
+            self.functionMemories[len(self.functionMemories) - 1].put(node.id, node.expression.accept(self))
     
     @when(AST.Instructions)
     def visit(self, node):
