@@ -26,6 +26,10 @@ operators['LE'] = le
 operators['GE'] = ge
 
 class Interpreter(object):
+    
+    def __init__(self):
+        self.globalMemory = MemoryStack(Memory("global"))
+        self.functionMemories = []
 
     @on('node')
     def visit(self, node):
@@ -57,8 +61,7 @@ class Interpreter(object):
     
     @when(AST.Init)
     def visit(self, node):
-        #tu trzeba poczarowac z pamiecia
-        pass
+        self.globalMemory.put(node.id, node.expression.accept(self))    #dodajemy do obecnego memory w zakresie globalnym
     
     @when(AST.Instructions)
     def visit(self, node):
@@ -79,8 +82,8 @@ class Interpreter(object):
     
     @when(AST.Assignment)
     def visit(self, node):
-        #poczarowac z pamiecia
-        pass
+        if len(self.functionMemories) == 0 or self.functionMemories[len(self.functionMemories) - 1].put_existing(node.id, node.expression.accept(self)) is False:
+            self.globalMemory.put_existing(node.id, node.expression.accept(self))
 
     @when(AST.Choice)
     def visit(self, node):
@@ -143,8 +146,20 @@ class Interpreter(object):
     
     @when(AST.Compound)
     def visit(self, node):
+        function = False
+        if len(self.functionMemories) == 0:
+            self.globalMemory.push(Memory("compound"))
+        else:
+            function = True
+            self.functionMemories[len(self.functionMemories) - 1].push(Memory("compound"))
+            
         node.declarations.accept(self)
         node.instructions.accept(self)
+        
+        if function is False:
+            self.globalMemory.pop()
+        else:
+            self.functionMemories[len(self.functionMemories) - 1].pop()
     
     @when(AST.Condition)
     def visit(self, node):
@@ -160,7 +175,7 @@ class Interpreter(object):
     
     @when(AST.Id)
     def visit(self, node):
-        return node.id  #tu chyba trzeba zwrocic
+        return node.id
     
     @when(AST.BinExpr)
     def visit(self, node):
@@ -174,31 +189,40 @@ class Interpreter(object):
     
     @when(AST.IdWithParentheses)
     def visit(self, node):
-        node.id.accept(self)
-        node.expression_list.accept(self)
-        #tu trzeba ogarnac wywolanie funkcji
+        fundef = self.globalMemory.get(node.id.accept(self))
+        functionMemory = Memory(node.id)
+        map(lambda name, value: functionMemory.put(name, value), fundef.arglist.accept(self), node.expression_list.accept(self))
+        self.functionMemories.append(functionMemory)
+        try:
+            fundef.accept(self)
+            self.functionMemories.pop()
+        except ReturnValueException as e:
+            self.functionMemories.pop()
+            return e.value
     
     @when(AST.ExpressionList)
     def visit(self, node):
+        expressionResults = []
         for expression in node.expressions:
-            expression.accept(self)
+            expressionResults.append(expression.accept(self))
+        return expressionResults
     
     @when(AST.FunctionDefinitions)
     def visit(self, node):
         for fundef in node.fundefs:
-            fundef.accept(self)
+            self.globalMemory.put(fundef.id, fundef)
     
     @when(AST.FunctionDefinition)
     def visit(self, node):
-        node.arglist.accept(self)
         node.compound_instr.accept(self)
     
     @when(AST.ArgumentList)
     def visit(self, node):
+        args = []
         for arg in node.arg_list:
-            arg.accept(self)
+            args.append(arg.accept(self))
+        return args
     
     @when(AST.Argument)
     def visit(self, node):
-        type = node.type
-        id = node.id
+        return node.id
