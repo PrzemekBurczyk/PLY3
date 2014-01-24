@@ -11,8 +11,14 @@ int fff() {
 }
 
 float gcd(int m, float n) {
+	print "jola";
+	int zmienna = 3;
 	float res = 0;
+	
+	
 	float f = 1.0;
+
+	print "ala";
 
 	c = 6;
         c = 5.543;
@@ -22,7 +28,9 @@ float gcd(int m, float n) {
         
         d = 6;
         d = 4;
+        print d;
         f = gcd(d, 3.14);
+        print f;
         d = 7;
         c = fff();
         c = fff();

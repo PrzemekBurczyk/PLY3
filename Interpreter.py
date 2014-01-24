@@ -14,16 +14,16 @@ operators['/'] = div
 operators['%'] = mod
 operators['|'] = or_
 operators['&'] = and_
-operators['AND'] = and_
-operators['OR'] = or_
-operators['SHL'] = lshift
-operators['SHR'] = rshift
-operators['EQ'] = eq
-operators['NEQ'] = ne
+operators['&&'] = and_
+operators['||'] = or_
+operators['<<'] = lshift
+operators['>>'] = rshift
+operators['=='] = eq
+operators['!='] = ne
 operators['>'] = lt
 operators['<'] = gt
-operators['LE'] = le
-operators['GE'] = ge
+operators['<='] = le
+operators['>='] = ge
 
 class Interpreter(object):
     
@@ -41,26 +41,31 @@ class Interpreter(object):
 
     @when(AST.Program)
     def visit(self, node):
+        print "PROGRAM"
         node.declarations.accept(self)
         node.fundefs.accept(self)
         node.instructions.accept(self)
     
     @when(AST.Declarations)
     def visit(self, node):
+        print "DECLARATIONS"
         for declaration in node.declarations:
             declaration.accept(self)
     
     @when(AST.Declaration)
     def visit(self, node):
+        print "DECLARATION"
         node.inits.accept(self)
     
     @when(AST.Inits)
     def visit(self, node):
+        print "INITS"
         for init in node.inits:
             init.accept(self)
     
     @when(AST.Init)
     def visit(self, node):
+        print "INIT"
         if len(self.functionMemories) == 0:
             self.globalMemory.put(node.id, node.expression.accept(self))
         else:
@@ -68,6 +73,7 @@ class Interpreter(object):
     
     @when(AST.Instructions)
     def visit(self, node):
+        print "INSTRUCTIONS"
         for instruction in node.instructions:
             instruction.accept(self)
     
@@ -77,6 +83,7 @@ class Interpreter(object):
     
     @when(AST.Print)
     def visit(self, node):
+        print "PRINT"
         print node.expression.accept(self)
     
     @when(AST.Labeled)
@@ -85,16 +92,19 @@ class Interpreter(object):
     
     @when(AST.Assignment)
     def visit(self, node):
+        print "ASSIGNMENT"
         if len(self.functionMemories) == 0 or self.functionMemories[len(self.functionMemories) - 1].put_existing(node.id, node.expression.accept(self)) is False:
             self.globalMemory.put_existing(node.id, node.expression.accept(self))
 
     @when(AST.Choice)
     def visit(self, node):
+        print "CHOICE"
         if not node._if.accept(self):
             node._else.accept(self) #return?
     
     @when(AST.If)
     def visit(self, node):
+        print "IF"
         if node.cond.accept(self):
             node.statement.accept(self)
             return True     #co z returnem powyzszego, czy potrzebny?
@@ -103,10 +113,12 @@ class Interpreter(object):
     
     @when(AST.Else)
     def visit(self, node):
+        print "ELSE"
         return node.statement.accept(self) #czy tu potrzebny return?
     
     @when(AST.While)
     def visit(self, node):
+        print "WHILE"
         r = None
         while node.cond.accept(self):
             try:
@@ -119,6 +131,7 @@ class Interpreter(object):
     
     @when(AST.RepeatUntil)
     def visit(self, node):
+        print "REPEAT"
         r = None
         try:
             r = node.statement.accept(self)
@@ -137,18 +150,22 @@ class Interpreter(object):
     
     @when(AST.Return)
     def visit(self, node):
+        print "RETURN"
         raise ReturnValueException(node.expression.accept(self))
     
     @when(AST.Continue)
     def visit(self, node):
+        print "CONTINUE"
         raise ContinueException()
     
     @when(AST.Break)
     def visit(self, node):
+        print "BREAK"
         raise BreakException()
     
     @when(AST.Compound)
     def visit(self, node):
+        print "COMPOUND"
         function = False
         if len(self.functionMemories) == 0:
             self.globalMemory.push(Memory("compound"))
@@ -174,27 +191,32 @@ class Interpreter(object):
     
     @when(AST.Const)
     def visit(self, node):
+        print "CONST"
         return node.value
     
     @when(AST.Id)
     def visit(self, node):
+        print "ID"
         return node.id
     
     @when(AST.BinExpr)
     def visit(self, node):
+        print "BINEXPR"
         left = node.expr1.accept(self)
         right = node.expr2.accept(self)
         return operators[node.operator](left, right)
     
     @when(AST.ExpressionInParentheses)
     def visit(self, node):
+        print "EXPRESSION IN PARENTHESES"
         return node.expression.accept(self)
     
     @when(AST.IdWithParentheses)
     def visit(self, node):
+        print "ID WITH PARENTHESES"
         fundef = self.globalMemory.get(node.id.accept(self))
         functionMemory = Memory(node.id)
-        map(lambda name, value: functionMemory.put(name, value), fundef.arglist.accept(self), node.expression_list.accept(self))
+        print map(lambda name, value: functionMemory.put(name, value), fundef.arglist.accept(self), node.expression_list.accept(self))  #print is debug output
         self.functionMemories.append(functionMemory)
         try:
             fundef.accept(self)
@@ -205,6 +227,7 @@ class Interpreter(object):
     
     @when(AST.ExpressionList)
     def visit(self, node):
+        print "EXPRESSION LIST"
         expressionResults = []
         for expression in node.expressions:
             expressionResults.append(expression.accept(self))
@@ -212,15 +235,18 @@ class Interpreter(object):
     
     @when(AST.FunctionDefinitions)
     def visit(self, node):
+        print "FUNCTION DEFINITIONS"
         for fundef in node.fundefs:
             self.globalMemory.put(fundef.id, fundef)
     
     @when(AST.FunctionDefinition)
     def visit(self, node):
+        print "FUNCTION DEFINITION"
         node.compound_instr.accept(self)
     
     @when(AST.ArgumentList)
     def visit(self, node):
+        print "ARGUMENT LIST"
         args = []
         for arg in node.arg_list:
             args.append(arg.accept(self))
@@ -228,4 +254,5 @@ class Interpreter(object):
     
     @when(AST.Argument)
     def visit(self, node):
+        print "ARGUMENT"
         return node.id
