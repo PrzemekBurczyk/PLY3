@@ -1,9 +1,10 @@
-float a = 0, b = 0, c = 0;
+float a = 1, b = 0, c = 0;
 
 int d = 0;
 
 int foo(int a, string b){
 	print "ola";
+	return 6;
 }
 
 int fff() {
@@ -11,15 +12,10 @@ int fff() {
 }
 
 float gcd(int m, float n) {
-	print "jola";
 	int zmienna = 3;
 	float res = 0;
-	
-	
 	float f = 1.0;
-
 	print "ala";
-
 	c = 6;
         c = 5.543;
         
@@ -61,6 +57,10 @@ float gcd(int m, float n) {
 	return 5.0;
 }
 
+a = 5;
 while(a >= b ) {
-    a = 1/2*(a+b/a);
+    a = a - 1;
+    print a;
 }
+
+print gcd(1, 5);
