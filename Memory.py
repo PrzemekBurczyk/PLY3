@@ -29,7 +29,7 @@ class MemoryStack:
 
     def get(self, name):             # get from memory stack current value of variable <name>
         if len(self.memoryStack) > 0:
-            for i in range(len(self.memoryStack) - 1, 0, -1):
+            for i in range(len(self.memoryStack) - 1, -1, -1):
                 if self.memoryStack[i].has_key(name):
                     return self.memoryStack[i].get(name)
         else:
@@ -43,7 +43,7 @@ class MemoryStack:
         
     def put_existing(self, name, value):
         if len(self.memoryStack) > 0:
-            for i in range(len(self.memoryStack) - 1, 0, -1):
+            for i in range(len(self.memoryStack) - 1, -1, -1):
                 if self.memoryStack[i].has_key(name):
                     self.memoryStack[i].put(name, value)
                     return True
