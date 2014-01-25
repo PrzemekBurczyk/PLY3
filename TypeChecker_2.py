@@ -97,6 +97,11 @@ class TypeChecker(object):
     def getFunArgs(self, tab, fun):
         if tab.name == fun:
             return tab.funargs
+        
+        if tab.symbols.has_key(fun):
+            if tab.get(fun).name == fun and isinstance(tab.get(fun), SymbolTable):
+                return tab.get(fun).funargs
+            
         if tab.getParentScope() == None:
             return None
         if tab.getParentScope().symbols.has_key(fun):

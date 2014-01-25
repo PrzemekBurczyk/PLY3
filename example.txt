@@ -57,10 +57,10 @@ float gcd(int m, float n) {
 	return 5.0;
 }
 
+print gcd(0,0);
+
 a = 5;
 while(a >= b ) {
     a = a - 1;
     print a;
 }
-
-print gcd(1, 5);
