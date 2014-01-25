@@ -247,7 +247,7 @@ class Interpreter(object):
     def visit(self, node):
         print "ID WITH PARENTHESES"
         fundef = self.globalMemory.get(node.id)
-        functionMemory = MemoryStack(node.id)
+        functionMemory = MemoryStack(Memory(node.id))
         print map(lambda name, value: functionMemory.put(name, value), fundef.arglist.accept(self), node.expression_list.accept(self))  #print is debug output
         self.functionMemories.append(functionMemory)
         try:
