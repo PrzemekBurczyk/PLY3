@@ -84,7 +84,10 @@ class Interpreter(object):
     @when(AST.Print)
     def visit(self, node):
         print "PRINT"
-        print node.expression.accept(self)
+        value = node.expression.accept(self)
+        if type(node.expression) is AST.Id:
+            value = self._get_id_value_from_memory(value)
+        print value
     
     @when(AST.Labeled)
     def visit(self, node):
@@ -192,7 +195,15 @@ class Interpreter(object):
     @when(AST.Const)
     def visit(self, node):
         print "CONST"
-        return node.value
+        return self._value_as_proper_type(node.value)
+    
+    def _value_as_proper_type(self, value):
+        for type_name in [int, float]:
+            try:
+                return type_name(value)
+            except Exception:
+                pass
+        return value
     
     @when(AST.Id)
     def visit(self, node):
@@ -204,8 +215,29 @@ class Interpreter(object):
         print "BINEXPR"
         left = node.expr1.accept(self)
         right = node.expr2.accept(self)
+        if type(node.expr1) is AST.Id:
+            left = self._get_id_value_from_memory(left)
+            print "CONVERTED LEFT"
+        if type(node.expr2) is AST.Id:
+            right = self._get_id_value_from_memory(right)
+            print "CONVERTED RIGHT"
+        print type(node.expr1)
+        print type(node.expr2)
+        print "  LEFT:", left, type(left)
+        print "  RIGHT:", right, type(right)
         return operators[node.operator](left, right)
-    
+
+    def _get_id_value_from_memory(self, id):
+        value = None
+        if self._currently_inside_a_function():
+            value = self.functionMemories[-1].get(id)
+        if value == None:
+            value = self.globalMemory.get(id)
+        return value
+
+    def _currently_inside_a_function(self):
+        return len(self.functionMemories) > 0
+
     @when(AST.ExpressionInParentheses)
     def visit(self, node):
         print "EXPRESSION IN PARENTHESES"
