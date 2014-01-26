@@ -21,9 +21,10 @@ if __name__ == '__main__':
     if ast == None:
         sys.exit(-1)
 
-    #try:
-    ast.printTree(0)
-    TypeChecker().dispatch(ast)
-    ast.accept(Interpreter())
-    #except Exception:
-    #print "Error while printing tree or performing type-check caused by previous syntax errors."
+    try:
+        ast.printTree(0)
+        semantic_errors_found = TypeChecker().dispatch(ast)
+        if not semantic_errors_found:
+            ast.accept(Interpreter())
+    except Exception:
+        print "Error while printing tree or performing type-check caused by previous syntax errors."

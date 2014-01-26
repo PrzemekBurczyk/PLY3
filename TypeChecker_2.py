@@ -47,6 +47,9 @@ class SymbolNotDeclaredError(Exception):
 
 class TypeChecker(object):
 
+    def __init__(self):
+        self.found_any_errors = False
+
     def dispatch(self, node, *args):
         self.node = node
         className = node.__class__.__name__
@@ -114,6 +117,7 @@ class TypeChecker(object):
         self.dispatch(node.declarations, tab)
         self.dispatch(node.fundefs, tab)
         self.dispatch(node.instructions, tab)
+        return self.found_any_errors
 
     def visit_Declarations(self, node, tab):
         for declaration in node.declarations:
@@ -133,6 +137,7 @@ class TypeChecker(object):
             if symbol == node.id:
                 print "line {1}: Duplicated usage of symbol {0}".format(node.id, node.line)
                 errorOccured = True
+                self.found_any_errors = True
                 #raise DuplicatedSymbolError
         if not errorOccured:        
             tab.put(node.id, VariableSymbol(node.id, type, node.expression))
@@ -157,6 +162,7 @@ class TypeChecker(object):
         variable = self.findVariable(tab, node.id)
         if variable == None:
             print "line {1}: Symbol {0} not defined before".format(node.id, node.line)
+            self.found_any_errors = True
         else:
             valueType = self.dispatch(node.expression, tab)
             if valueType == None:
@@ -164,6 +170,7 @@ class TypeChecker(object):
             if not ttype["="][variable.type].has_key(valueType):
                 #print variable.name, variable.type
                 print "line {3}: Value of type {0} cannot be assigned to symbol {1} of type {2}".format(valueType, node.id, variable.type, node.line)
+                self.found_any_errors = True
             else:
                 return ttype["="][variable.type][valueType]
         
@@ -191,10 +198,13 @@ class TypeChecker(object):
         ret_type = TypeChecker.getFunReturnType(self, tab)
         if ret_type == 'float' and type != 'int' and type != 'float':
             print "line {0}: Return type {1} incompatible with declared {2}".format(node.line, type, ret_type)
+            self.found_any_errors = True
         elif ret_type == 'int' and type != 'int':
             print "line {0}: Return type {1} incompatible with declared {2}".format(node.line, type, ret_type)
+            self.found_any_errors = True
         elif ret_type == 'string' and type != 'string':
             print "line {0}: Return type {1} incompatible with declared {2}".format(node.line, type, ret_type)
+            self.found_any_errors = True
 
     def visit_Continue(self, node, tab):
         pass
@@ -231,6 +241,7 @@ class TypeChecker(object):
                     type = 'float'
                 except ValueError:
                     print "line {1}: Value's {0} type is not recognized".format(value, node.line)
+                    self.found_any_errors = True
         return type
 
     def visit_Id(self, node, tab):
@@ -238,6 +249,7 @@ class TypeChecker(object):
         variable = self.findVariable(tab, node.id)
         if variable == None:
             print "line {1}: Symbol {0} not declared before".format(node.id, node.line)
+            self.found_any_errors = True
         else:
             return variable.type
 
@@ -251,6 +263,7 @@ class TypeChecker(object):
             return type
         except KeyError:
             print "line {0}: Incompatible expression types".format(node.line)
+            self.found_any_errors = True
             #raise IncompatibleTypesError
         except IncompatibleTypesError:
             pass
@@ -267,9 +280,11 @@ class TypeChecker(object):
         #print variable.name, variable.type
         if variable == None:
             print "line {1}: Symbol {0} not declared before".format(node.id, node.line)
+            self.found_any_errors = True
             return None
         if type(variable) is not SymbolTable:
             print "line {1}: {0} is not a function".format(node.id, node.line)
+            self.found_any_errors = True
             return None
         #print "id with parentheses:", node.id, tab.symbols
         funcall_argtypes = self.dispatch(node.expression_list, tab)
@@ -277,6 +292,7 @@ class TypeChecker(object):
         if len(funcall_argtypes) != len(declared_fun_args):
             print "line {3}: Function {0} takes {1} arguments, but {2} are supplied".format( \
                     node.id, len(declared_fun_args), len(funcall_argtypes), node.line)
+            self.found_any_errors = True
             return None
         for argumentSymbol in declared_fun_args.values():
             corresponding_funcall_argtype = funcall_argtypes[argumentSymbol.position]
@@ -287,6 +303,7 @@ class TypeChecker(object):
                         "({2}) to required type ({3})".format( \
                         node.id, argumentSymbol.position, \
                         corresponding_funcall_argtype, argumentSymbol.type, node.line)
+                self.found_any_errors = True
         return variable.type
 
     def visit_ExpressionList(self, node, tab):
@@ -313,6 +330,7 @@ class TypeChecker(object):
         for symbol in tab.symbols:
             if symbol == node.id:
                 print "line {1}: Duplicated usage of symbol {0}".format(node.id, node.line)
+                self.found_any_errors = True
                 errorOccured = True
                 #raise DuplicatedSymbolError
         if not errorOccured:
