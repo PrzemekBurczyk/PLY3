@@ -57,10 +57,16 @@ float gcd(int m, float n) {
 	return 5.0;
 }
 
-print gcd(0,0);
+int sub(int l, int r) {
+	return l - r;
+}
 
 a = 5;
 while(a >= b ) {
     a = a - 1;
     print a;
+    print foo(2, "abc");
 }
+
+print "odejmowanie";
+print sub(68, 5);
